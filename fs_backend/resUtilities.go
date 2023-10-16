@@ -25,6 +25,8 @@ func ErrorResponseWriter(res http.ResponseWriter, errCode string, statusCode int
 }
 
 func JsonResponseWriter(res http.ResponseWriter, dataMap map[string]any, statusCode int) {
+	res.Header().Set("Access-Control-Allow-Origin", "*")
+	res.WriteHeader(statusCode)
 	if len(dataMap) != 0 {
 		data, err := json.Marshal(dataMap)
 		if err != nil {
@@ -32,8 +34,6 @@ func JsonResponseWriter(res http.ResponseWriter, dataMap map[string]any, statusC
 			return
 		}
 		res.Header().Set("Content-Type", "application/json")
-		res.Header().Set("Access-Control-Allow-Origin", "*")
-		res.WriteHeader(statusCode)
 		res.Write(data)
 	}
 }
