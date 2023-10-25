@@ -219,6 +219,12 @@ func (apifn ApiConfig) HandleServiceAccountLogin(res http.ResponseWriter, req *h
 		ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusForbidden)
 		return
 	}
+
+	if len(splits) != 2 {
+		ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusForbidden)
+		return
+	}
+
 	username := splits[0]
 	workspaceId := splits[1]
 
