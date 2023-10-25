@@ -12,13 +12,9 @@ class FSRepo extends ApiRepo {
   FSRepo({required super.secureStorage});
 
   Future<DirectoryModel> getDirectory(String location) async {
-    final uri = Uri.parse(ApiConstants.dirQuery).replace(
-        queryParameters: { 'location': location}
-    );
-    final res = await super.authRequest(
-        requestType: RequestType.get,
-        uri: uri
-    );
+    final uri = Uri.parse(ApiConstants.dirQuery)
+        .replace(queryParameters: {'location': location});
+    final res = await super.authRequest(requestType: RequestType.get, uri: uri);
     if (res.statusCode == 200) {
       final parsed = jsonDecode(res.body);
       return DirectoryModel.fromJson(parsed['directoryAndContents']);
@@ -36,15 +32,14 @@ class FSRepo extends ApiRepo {
     }
   }
 
-  Future<DirectoryModel> createDirectory(String newDirName, String location) async {
-    final uri = Uri.parse(ApiConstants.dirQuery).replace(
-        queryParameters: { 'location': location }
-    );
+  Future<DirectoryModel> createDirectory(
+      String newDirName, String location) async {
+    final uri = Uri.parse(ApiConstants.dirQuery)
+        .replace(queryParameters: {'location': location});
     final res = await super.authRequest(
         requestType: RequestType.put,
         uri: uri,
-        body: jsonEncode({ 'newDirectoryName': newDirName })
-    );
+        body: jsonEncode({'newDirectoryName': newDirName}));
     if (res.statusCode == 201) {
       final parsed = jsonDecode(res.body);
       return DirectoryModel.fromJson(parsed['newDirectory']);
@@ -65,13 +60,10 @@ class FSRepo extends ApiRepo {
   }
 
   FutureOr<void> deleteDirectory(String location) async {
-    final uri = Uri.parse(ApiConstants.dirQuery).replace(
-      queryParameters: { 'location': location }
-    );
-    final res = await super.authRequest(
-        requestType: RequestType.delete,
-        uri: uri
-    );
+    final uri = Uri.parse(ApiConstants.dirQuery)
+        .replace(queryParameters: {'location': location});
+    final res =
+        await super.authRequest(requestType: RequestType.delete, uri: uri);
     if (res.statusCode == 200) {
       return;
     } else if (res.statusCode == 400) {
@@ -91,12 +83,10 @@ class FSRepo extends ApiRepo {
   }
 
   FutureOr<void> deleteFile(String location) async {
-    final uri = Uri.parse(ApiConstants.fileQuery).replace(
-      queryParameters: { 'location': location }
-    );
-    final res = await super.authRequest(
-        requestType: RequestType.delete, uri: uri
-    );
+    final uri = Uri.parse(ApiConstants.fileQuery)
+        .replace(queryParameters: {'location': location});
+    final res =
+        await super.authRequest(requestType: RequestType.delete, uri: uri);
     if (res.statusCode == 200) {
       return;
     } else if (res.statusCode == 403) {
@@ -107,12 +97,9 @@ class FSRepo extends ApiRepo {
   }
 
   FutureOr<List<dynamic>> getShared(workspaceName) async {
-    final uri = Uri.parse(ApiConstants.sharedContent).replace(
-      queryParameters: { 'workspace': workspaceName }
-    );
-    final res = await authRequest(
-        requestType: RequestType.get, uri: uri
-    );
+    final uri = Uri.parse(ApiConstants.sharedContent)
+        .replace(queryParameters: {'workspace': workspaceName});
+    final res = await authRequest(requestType: RequestType.get, uri: uri);
     if (res.statusCode == 200) {
       final parsed = jsonDecode(res.body);
       final jsonList = parsed['sharedContent'] as List;
@@ -120,8 +107,7 @@ class FSRepo extends ApiRepo {
       for (var element in jsonList) {
         if (element['type'] == 'file') {
           contents.add(FileModel.fromJson(element));
-        }
-        else if (element['type'] == 'directory') {
+        } else if (element['type'] == 'directory') {
           contents.add(DirectoryModel.fromJson(element));
         }
       }
@@ -133,13 +119,13 @@ class FSRepo extends ApiRepo {
 
   FutureOr<void> addRoleToFS(String location, Role role) async {
     final res = await authRequest(
-      requestType: RequestType.post,
-      uri: Uri.parse(ApiConstants.assignRoleFS),
-      body: jsonEncode({
-        'location': location, 'roleId': role.id,
-      })
-    );
-    if (res.statusCode == 200) {
+        requestType: RequestType.post,
+        uri: Uri.parse(ApiConstants.assignRoleFS),
+        body: jsonEncode({
+          'location': location,
+          'roleId': role.id,
+        }));
+    if (res.statusCode == 201) {
       return;
     } else {
       throw ServerError();
@@ -148,12 +134,9 @@ class FSRepo extends ApiRepo {
 
   FutureOr<void> removeRoleFS(String location, Role role) async {
     final res = await authRequest(
-      requestType: RequestType.delete,
-      uri: Uri.parse(ApiConstants.assignRoleFS),
-      body: jsonEncode({
-        'roleId': role.id, 'location': location
-      })
-    );
+        requestType: RequestType.delete,
+        uri: Uri.parse(ApiConstants.assignRoleFS),
+        body: jsonEncode({'roleId': role.id, 'location': location}));
     if (res.statusCode == 200) {
       return;
     } else {
@@ -162,12 +145,9 @@ class FSRepo extends ApiRepo {
   }
 
   Future<DirectoryModel> getDirectoryDetails(String location) async {
-    final uri = Uri.parse(ApiConstants.dirDetails).replace(
-      queryParameters: { 'location': location }
-    );
-    final res = await authRequest(
-        requestType: RequestType.get, uri: uri
-    );
+    final uri = Uri.parse(ApiConstants.dirDetails)
+        .replace(queryParameters: {'location': location});
+    final res = await authRequest(requestType: RequestType.get, uri: uri);
     if (res.statusCode == 200) {
       final parsed = jsonDecode(res.body);
       final dir = DirectoryModel.fromJson(parsed['directory']);

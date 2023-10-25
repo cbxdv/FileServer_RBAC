@@ -123,6 +123,10 @@ func (apifn *ApiConfig) HandleOwnerAccountRegistration(res http.ResponseWriter, 
 		return
 	}
 
+	go func() {
+		apifn.mailservice.SendAccountCreationMail(newAccount)
+	}()
+
 	// Responding with a OK message
 	resData := make(map[string]any)
 	JsonResponseWriter(res, resData, http.StatusCreated)
@@ -182,6 +186,11 @@ func (apifn ApiConfig) HandleOwnerAccountLogin(res http.ResponseWriter, req *htt
 		ErrorResponseWriter(res, apierrors.ResErrServerError, http.StatusInternalServerError)
 		return
 	}
+
+	go func() {
+		apifn.mailservice.SendLoginMail(account)
+	}()
+
 	resData := make(map[string]any)
 	resData["account"] = map[string]any{
 		"id":       account.Id,

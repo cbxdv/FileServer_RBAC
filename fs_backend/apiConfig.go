@@ -6,6 +6,7 @@ import (
 
 	"fs_backend/databaseservice"
 	"fs_backend/fileservice"
+	"fs_backend/mailservice"
 	"fs_backend/transferpropertiesservice"
 )
 
@@ -16,6 +17,7 @@ type ApiConfig struct {
 	graphService         databaseservice.GraphDatabaseService
 	transferPropsService transferpropertiesservice.TransferPropertiesService
 	fileService          fileservice.FileService
+	mailservice          mailservice.MailService
 }
 
 func (apifn *ApiConfig) initialize() {
@@ -23,6 +25,7 @@ func (apifn *ApiConfig) initialize() {
 	apifn.graphService.Connect()
 	apifn.transferPropsService.Start()
 	apifn.fileService.Initialize()
+	apifn.mailservice.Initialize()
 }
 
 func (apifn *ApiConfig) readEnv() {

@@ -25,7 +25,10 @@ class _DirectoryDetailsState extends State<DirectoryDetails> {
       isLoading = true;
     });
     try {
-      final dirRes = await context.read<FSBloc>().fsRepo.getDirectoryDetails(widget.dir.location);
+      final dirRes = await context
+          .read<FSBloc>()
+          .fsRepo
+          .getDirectoryDetails(widget.dir.location);
       setState(() {
         dirDetails = dirRes;
         isLoading = false;
@@ -54,10 +57,8 @@ class _DirectoryDetailsState extends State<DirectoryDetails> {
 
   void addRoleHandler() async {
     final workspaceName = dirDetails.location.split("/").first;
-    final roleSelected = await showAddRoleDialog(
-        context, dirDetails.roles,
-        () => context.read<FSBloc>().fsRepo.getAllRoles(workspaceName)
-    );
+    final roleSelected = await showAddRoleDialog(context, dirDetails.roles,
+        () => context.read<FSBloc>().fsRepo.getAllRoles(workspaceName));
     if (roleSelected == null) {
       return;
     }
@@ -66,7 +67,10 @@ class _DirectoryDetailsState extends State<DirectoryDetails> {
         isLoading = true;
       });
       if (context.mounted) {
-        await context.read<FSBloc>().fsRepo.addRoleToFS(widget.dir.location, roleSelected);
+        await context
+            .read<FSBloc>()
+            .fsRepo
+            .addRoleToFS(widget.dir.location, roleSelected);
       }
       setState(() {
         isLoading = false;
@@ -89,7 +93,10 @@ class _DirectoryDetailsState extends State<DirectoryDetails> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const SizedBox(width: 30, height: 120, child: Center(child: CircularProgressIndicator()));
+      return const SizedBox(
+          width: 30,
+          height: 120,
+          child: Center(child: CircularProgressIndicator()));
     }
     return Padding(
       padding: const EdgeInsets.all(30.0),
@@ -97,34 +104,49 @@ class _DirectoryDetailsState extends State<DirectoryDetails> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(dirDetails.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 20, 30, 70),)),
+          Text(dirDetails.name,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 20, 30, 70),
+              )),
           const SizedBox(height: 20),
-          const Text('Created On', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-          Text('${DateFormat.yMd().format(dirDetails.createdOn)} - ${DateFormat.jm().format(dirDetails.createdOn)}', style: const TextStyle(fontSize: 14)),
+          const Text('Created On',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(
+              '${DateFormat.yMd().format(dirDetails.createdOn)} - ${DateFormat.jm().format(dirDetails.createdOn)}',
+              style: const TextStyle(fontSize: 14)),
           const SizedBox(height: 10),
-          const Text('Location', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-          Text(dirDetails.location, style: const TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis),
+          const Text('Location',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(dirDetails.location,
+              style: const TextStyle(fontSize: 14),
+              overflow: TextOverflow.ellipsis),
           const SizedBox(height: 20),
           if (dirDetails.roles.isNotEmpty) ...[
-            const Text('Roles', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+            const Text('Roles',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
             const SizedBox(height: 5),
             Wrap(
               children: List.generate(
                 dirDetails.roles.length,
-                    (index) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Chip(
-                        backgroundColor: Colors.transparent,
-                        side: BorderSide(color: Colors.grey.shade200),
-                        elevation: 0,
-                        padding: EdgeInsets.zero,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        label: Text(dirDetails.roles[index].name),
-                        deleteIcon: const Icon(Icons.remove_circle_outline, size: 16,),
-                        deleteButtonTooltipMessage: 'Remove',
-                        onDeleted: () => removeRoleHandler(dirDetails.roles[index]),
-                      ),
+                (index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Chip(
+                    backgroundColor: Colors.transparent,
+                    side: BorderSide(color: Colors.grey.shade200),
+                    elevation: 0,
+                    padding: EdgeInsets.zero,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    label: Text(dirDetails.roles[index].name),
+                    deleteIcon: const Icon(
+                      Icons.remove_circle_outline,
+                      size: 16,
                     ),
+                    deleteButtonTooltipMessage: 'Remove',
+                    onDeleted: () => removeRoleHandler(dirDetails.roles[index]),
+                  ),
+                ),
               ),
             )
           ],
@@ -132,16 +154,23 @@ class _DirectoryDetailsState extends State<DirectoryDetails> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              OutlinedButton(onPressed: addRoleHandler, child: const Text('Add Role')),
+              OutlinedButton(
+                  onPressed: addRoleHandler, child: const Text('Add Role')),
               const SizedBox(width: 20),
-              OutlinedButton(onPressed: () {
-                Navigator.pop(context);
-                context.read<FSBloc>().add(DeleteDirRequest(location: dirDetails.location));
-              }, child: const Text('Delete')),
+              OutlinedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    context
+                        .read<FSBloc>()
+                        .add(DeleteDirRequest(location: dirDetails.location));
+                  },
+                  child: const Text('Delete')),
               const SizedBox(width: 20),
-              OutlinedButton(onPressed: () {
-                Navigator.pop(context);
-              }, child: const Text('Dismiss')),
+              OutlinedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Dismiss')),
             ],
           )
         ],
