@@ -27,7 +27,7 @@ func (ms MailService) SendAccountCreationMail(account models.OwnerAccount) {
 		"To: " + account.Email + "\r\n" +
 		"Subject: Account Created\r\n\r\n" +
 		"Hello " + account.Name + "\nYour account has been created successfully.\r\n")
-	auth := smtp.PlainAuth("", from, "", ms.smtpHost)
+	auth := smtp.CRAMMD5Auth(from, "")
 	err := smtp.SendMail(ms.smtpHost+":"+ms.smtpPort, auth, from, to, message)
 	if err != nil {
 		log.Default().Println(err)
@@ -42,7 +42,7 @@ func (ms MailService) SendLoginMail(account models.OwnerAccount) {
 		"To: " + account.Email + "\r\n" +
 		"Subject: Login Successful\r\n\r\n" +
 		"Hello " + account.Name + "\nYour account has been logged in.\r\n")
-	auth := smtp.PlainAuth("", from, "", ms.smtpHost)
+	auth := smtp.CRAMMD5Auth(from, "")
 	err := smtp.SendMail(ms.smtpHost+":"+ms.smtpPort, auth, from, to, message)
 	if err != nil {
 		log.Default().Println(err)
