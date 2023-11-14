@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+  app:
+    container_name: app
+    build: .
+    ports:
+      - 3000:3000
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+      smtp:
+        condition: service_started
+    environment:
+      - SMTP_HOST=smtp
+      - NEO4J_URI=neo4j://database:7687
+
+  database:
+    container_name: graph-database
+    image: neo4j:4.4
+    ports:
+      - 7687:7687
+      - 7474:7474
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s
+
+  smtp:
+    container_name: mailserver
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
