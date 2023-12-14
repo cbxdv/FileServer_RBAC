@@ -9,17 +9,15 @@ import 'package:http/http.dart' as http;
 import '../models/workspace.dart';
 
 class AuthRepo extends ApiRepo {
-  AuthRepo({ required super.secureStorage });
+  AuthRepo({required super.secureStorage});
 
   Future<Account?> checkAuth() async {
     final token = await secureStorage.read(key: "token");
     if (token == null || token.isEmpty) {
       return null;
     }
-    final res = await http.get(
-      Uri.parse(ApiConstants.checkAuth),
-      headers: {'Authorization': 'bearer $token'}
-    );
+    final res = await http.get(Uri.parse(ApiConstants.checkAuth),
+        headers: {'Authorization': 'bearer $token'});
     if (res.statusCode == 200) {
       final parsed = jsonDecode(res.body);
       if (parsed['account']['isOwner'] == true) {
@@ -30,10 +28,10 @@ class AuthRepo extends ApiRepo {
         final workspaceName = usernameSplit.last;
         final username = usernameSplit.first;
         return ServiceAccount(
-            workspace: Workspace(name: workspaceName),
-            id: parsedAccount['id'],
-            name: parsedAccount['name'],
-            username: username,
+          workspace: Workspace(name: workspaceName),
+          id: parsedAccount['id'],
+          name: parsedAccount['name'],
+          username: username,
         );
       }
     }
@@ -69,10 +67,8 @@ class AuthRepo extends ApiRepo {
     required String username,
     required String password,
   }) async {
-    final res = await http.post(
-      Uri.parse(ApiConstants.loginServiceAccount),
-      body: jsonEncode({ 'username': username, 'password': password })
-    );
+    final res = await http.post(Uri.parse(ApiConstants.loginServiceAccount),
+        body: jsonEncode({'username': username, 'password': password}));
     if (res.statusCode == 200) {
       final parsed = jsonDecode(res.body);
       await secureStorage.write(key: 'token', value: parsed['token']);
@@ -97,7 +93,8 @@ class AuthRepo extends ApiRepo {
   }) async {
     final res = await http.post(
       Uri.parse(ApiConstants.registerOwnerAccount),
-      body: jsonEncode(<String, String>{"name": name, "email": email, "password": password}),
+      body: jsonEncode(
+          <String, String>{"name": name, "email": email, "password": password}),
     );
     if (res.statusCode == 201) {
       return ownerAccountLogin(email: email, password: password);
@@ -121,13 +118,14 @@ class AuthRepo extends ApiRepo {
   }
 
   Future<void> changePassword({
-    required String oldPassword, required String newPassword,
-}) async {
+    required String oldPassword,
+    required String newPassword,
+  }) async {
     final res = await super.authRequest(
         requestType: RequestType.patch,
         uri: Uri.parse(ApiConstants.changePassword),
-        body: jsonEncode({'oldPassword': oldPassword, 'newPassword': newPassword})
-    );
+        body: jsonEncode(
+            {'oldPassword': oldPassword, 'newPassword': newPassword}));
     if (res.statusCode == 200) {
       return;
     } else {

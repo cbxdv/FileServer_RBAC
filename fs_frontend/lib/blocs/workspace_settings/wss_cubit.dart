@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fs_frontend/blocs/workspace_settings/wss_state.dart';
 import 'package:fs_frontend/models/role.dart';

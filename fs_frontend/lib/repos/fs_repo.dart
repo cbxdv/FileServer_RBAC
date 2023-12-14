@@ -49,6 +49,8 @@ class FSRepo extends ApiRepo {
       final errDescription = parsed['error']['description'];
       if (errCode == 'dir-already-exists') {
         throw ResourceAlreadyExists(errDescription);
+      } else if (errCode == 'permission-denied') {
+        throw PermissionDenied();
       } else {
         throw ServerError();
       }

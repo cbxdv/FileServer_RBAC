@@ -76,8 +76,9 @@ func (apifn *ApiConfig) HandleOwnerAccountRegistration(res http.ResponseWriter, 
 		return
 	}
 
-	// Enforcing passwords with minimum length of 8
-	if len(params.Password) < 8 {
+	// Enforcing strict passwords
+	isPasswordStrong := verifyPasswordStrength(params.Password)
+	if !isPasswordStrong {
 		log.Default().Println("Weak password")
 		ErrorResponseWriter(res, apierrors.ResErrWeakPassword, http.StatusBadRequest)
 		return
@@ -225,12 +226,12 @@ func (apifn ApiConfig) HandleServiceAccountLogin(res http.ResponseWriter, req *h
 
 	splits := strings.Split(params.Username, "@")
 	if err != nil {
-		ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusForbidden)
+		ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusUnauthorized)
 		return
 	}
 
 	if len(splits) != 2 {
-		ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusForbidden)
+		ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusUnauthorized)
 		return
 	}
 
@@ -243,7 +244,7 @@ func (apifn ApiConfig) HandleServiceAccountLogin(res http.ResponseWriter, req *h
 		log.Default().Println(err.Error())
 		if err != nil {
 			log.Default().Println(err.Error())
-			ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusForbidden)
+			ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusUnauthorized)
 			return
 		}
 	}
@@ -252,7 +253,7 @@ func (apifn ApiConfig) HandleServiceAccountLogin(res http.ResponseWriter, req *h
 	err = bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(params.Password))
 	if err != nil {
 		log.Default().Println(err.Error())
-		ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusForbidden)
+		ErrorResponseWriter(res, apierrors.ResErrInvalidCredentials, http.StatusUnauthorized)
 		return
 	}
 
