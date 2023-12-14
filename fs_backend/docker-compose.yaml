@@ -18,7 +18,7 @@ services:
 
   database:
     container_name: graph-database
-    image: neo4j:4.4
+    image: neo4j:5.14
     ports:
       - 7687:7687
       - 7474:7474
@@ -34,6 +34,8 @@ services:
   smtp:
     container_name: mailserver
     image: mailhog/mailhog
+    logging:
+      driver: 'none'
     ports:
       - 1025:1025
       - 8025:8025
